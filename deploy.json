@@ -73,7 +73,6 @@
             "DependsOn": [
                 "S3Bucket"
             ],
-            "Description": "Setting Amazon S3 bucket policy for external and AWS CodePipeline access",
             "Type": "AWS::S3::BucketPolicy",
             "Properties": {
                 "Bucket": {
@@ -82,16 +81,18 @@
                 "PolicyDocument": {
                     "Version": "2012-10-17",
                     "Id": "SSEAndSSLPolicy",
-                    "Statement": [{
-                        "Action": [
-                            "s3:GetObject"
-                        ],
-                        "Effect": "Allow",
-                        "Resource": {
-                            "Fn::Sub": "arn:aws:s3:::${S3Bucket}/*"
-                        },
-                        "Principal": "*"
-                    }]
+                    "Statement": [
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": {
+                                "Fn::Sub": "arn:aws:s3:::${S3Bucket}/*"
+                            },
+                            "Principal": "*"
+                        }
+                    ]
                 }
             }
         },
@@ -103,15 +104,17 @@
                     "Fn::Sub": "${AppName}-codebuild-role"
                 },
                 "AssumeRolePolicyDocument": {
-                    "Statement": [{
-                        "Effect": "Allow",
-                        "Principal": {
-                            "Service": [
-                                "codebuild.amazonaws.com"
-                            ]
-                        },
-                        "Action": "sts:AssumeRole"
-                    }]
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "codebuild.amazonaws.com"
+                                ]
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
                 },
                 "Path": "/"
             }
@@ -123,7 +126,8 @@
             "Properties": {
                 "PolicyName": "CodeBuildRolePolicy",
                 "PolicyDocument": {
-                    "Statement": [{
+                    "Statement": [
+                        {
                             "Effect": "Allow",
                             "Action": [
                                 "logs:CreateLogGroup",
@@ -165,9 +169,11 @@
                         }
                     ]
                 },
-                "Roles": [{
-                    "Ref": "CodeBuildTrustRole"
-                }]
+                "Roles": [
+                    {
+                        "Ref": "CodeBuildTrustRole"
+                    }
+                ]
             }
         },
         "CloudFormationTrustRole": {
@@ -178,15 +184,17 @@
                     "Fn::Sub": "${AppName}-cloudformation-role"
                 },
                 "AssumeRolePolicyDocument": {
-                    "Statement": [{
-                        "Effect": "Allow",
-                        "Principal": {
-                            "Service": [
-                                "cloudformation.amazonaws.com"
-                            ]
-                        },
-                        "Action": "sts:AssumeRole"
-                    }]
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "cloudformation.amazonaws.com"
+                                ]
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
                 },
                 "Path": "/"
             }
@@ -198,7 +206,8 @@
             "Properties": {
                 "PolicyName": "CloudFormationRolePolicy",
                 "PolicyDocument": {
-                    "Statement": [{
+                    "Statement": [
+                        {
                             "Action": [
                                 "s3:GetObject",
                                 "s3:GetObjectVersion",
@@ -316,9 +325,11 @@
                         }
                     ]
                 },
-                "Roles": [{
-                    "Ref": "CloudFormationTrustRole"
-                }]
+                "Roles": [
+                    {
+                        "Ref": "CloudFormationTrustRole"
+                    }
+                ]
             }
         },
         "CodePipelineTrustRole": {
@@ -329,15 +340,17 @@
                     "Fn::Sub": "${AppName}-codepipeline-role"
                 },
                 "AssumeRolePolicyDocument": {
-                    "Statement": [{
-                        "Effect": "Allow",
-                        "Principal": {
-                            "Service": [
-                                "codepipeline.amazonaws.com"
-                            ]
-                        },
-                        "Action": "sts:AssumeRole"
-                    }]
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "codepipeline.amazonaws.com"
+                                ]
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
                 },
                 "Path": "/"
             }
@@ -349,7 +362,8 @@
             "Properties": {
                 "PolicyName": "CodePipelineRolePolicy",
                 "PolicyDocument": {
-                    "Statement": [{
+                    "Statement": [
+                        {
                             "Action": [
                                 "s3:GetObject",
                                 "s3:GetObjectVersion",
@@ -398,9 +412,11 @@
                         }
                     ]
                 },
-                "Roles": [{
-                    "Ref": "CodePipelineTrustRole"
-                }]
+                "Roles": [
+                    {
+                        "Ref": "CodePipelineTrustRole"
+                    }
+                ]
             }
         },
         "CodeBuildProject": {
@@ -419,7 +435,8 @@
                 },
                 "Environment": {
                     "ComputeType": "BUILD_GENERAL1_SMALL",
-                    "EnvironmentVariables": [{
+                    "EnvironmentVariables": [
+                        {
                             "Name": "S3_ARTIFACT_BUCKET",
                             "Value": {
                                 "Ref": "S3ArtifactsBucket"
@@ -455,12 +472,14 @@
                 "Source": {
                     "Type": "CODEPIPELINE"
                 },
-                "Tags": [{
-                    "Key": "app-name",
-                    "Value": {
-                        "Ref": "AppName"
+                "Tags": [
+                    {
+                        "Key": "app-name",
+                        "Value": {
+                            "Ref": "AppName"
+                        }
                     }
-                }],
+                ],
                 "TimeoutInMinutes": 5
             }
         },
@@ -490,20 +509,22 @@
                 "PolicyDocument": {
                     "Version": "2012-10-17",
                     "Id": "SSEAndSSLPolicy",
-                    "Statement": [{
-                        "Sid": "DenyInsecureConnections",
-                        "Effect": "Deny",
-                        "Principal": "*",
-                        "Action": "s3:*",
-                        "Resource": {
-                            "Fn::Sub": "arn:aws:s3:::${S3ArtifactsBucket}/*"
-                        },
-                        "Condition": {
-                            "Bool": {
-                                "aws:SecureTransport": false
+                    "Statement": [
+                        {
+                            "Sid": "DenyInsecureConnections",
+                            "Effect": "Deny",
+                            "Principal": "*",
+                            "Action": "s3:*",
+                            "Resource": {
+                                "Fn::Sub": "arn:aws:s3:::${S3ArtifactsBucket}/*"
+                            },
+                            "Condition": {
+                                "Bool": {
+                                    "aws:SecureTransport": false
+                                }
                             }
                         }
-                    }]
+                    ]
                 }
             }
         },
@@ -526,76 +547,90 @@
                         "Arn"
                     ]
                 },
-                "Stages": [{
+                "Stages": [
+                    {
                         "Name": "Source",
-                        "Actions": [{
-                            "Name": "source",
-                            "InputArtifacts": [],
-                            "ActionTypeId": {
-                                "Version": "1",
-                                "Category": "Source",
-                                "Owner": "ThirdParty",
-                                "Provider": "GitHub"
-                            },
-                            "OutputArtifacts": [{
-                                "Name": {
-                                    "Fn::Sub": "${AppName}-SourceArtifact"
-                                }
-                            }],
-                            "Configuration": {
-                                "Repo": {
-                                    "Ref": "GitHubRepoName"
+                        "Actions": [
+                            {
+                                "Name": "source",
+                                "InputArtifacts": [],
+                                "ActionTypeId": {
+                                    "Version": "1",
+                                    "Category": "Source",
+                                    "Owner": "ThirdParty",
+                                    "Provider": "GitHub"
                                 },
-                                "Branch": {
-                                    "Ref": "GitHubRepoBranch"
+                                "OutputArtifacts": [
+                                    {
+                                        "Name": {
+                                            "Fn::Sub": "${AppName}-SourceArtifact"
+                                        }
+                                    }
+                                ],
+                                "Configuration": {
+                                    "Repo": {
+                                        "Ref": "GitHubRepoName"
+                                    },
+                                    "Branch": {
+                                        "Ref": "GitHubRepoBranch"
+                                    },
+                                    "OAuthToken": {
+                                        "Ref": "GitHubToken"
+                                    },
+                                    "Owner": {
+                                        "Ref": "GitHubUser"
+                                    }
                                 },
-                                "OAuthToken": {
-                                    "Ref": "GitHubToken"
-                                },
-                                "Owner": {
-                                    "Ref": "GitHubUser"
-                                }
-                            },
-                            "RunOrder": 1
-                        }]
+                                "RunOrder": 1
+                            }
+                        ]
                     },
                     {
                         "Name": "Build",
-                        "Actions": [{
-                            "Name": "build-from-source",
-                            "InputArtifacts": [{
-                                "Name": {
-                                    "Fn::Sub": "${AppName}-SourceArtifact"
-                                }
-                            }],
-                            "ActionTypeId": {
-                                "Category": "Build",
-                                "Owner": "AWS",
-                                "Version": "1",
-                                "Provider": "CodeBuild"
-                            },
-                            "OutputArtifacts": [{
-                                "Name": {
-                                    "Fn::Sub": "${AppName}-BuildArtifact"
-                                }
-                            }],
-                            "Configuration": {
-                                "ProjectName": {
-                                    "Fn::Sub": "${AppName}-build"
-                                }
-                            },
-                            "RunOrder": 1
-                        }]
+                        "Actions": [
+                            {
+                                "Name": "build-from-source",
+                                "InputArtifacts": [
+                                    {
+                                        "Name": {
+                                            "Fn::Sub": "${AppName}-SourceArtifact"
+                                        }
+                                    }
+                                ],
+                                "ActionTypeId": {
+                                    "Category": "Build",
+                                    "Owner": "AWS",
+                                    "Version": "1",
+                                    "Provider": "CodeBuild"
+                                },
+                                "OutputArtifacts": [
+                                    {
+                                        "Name": {
+                                            "Fn::Sub": "${AppName}-BuildArtifact"
+                                        }
+                                    }
+                                ],
+                                "Configuration": {
+                                    "ProjectName": {
+                                        "Fn::Sub": "${AppName}-build"
+                                    }
+                                },
+                                "RunOrder": 1
+                            }
+                        ]
                     },
                     {
                         "Name": "Deploy",
-                        "Actions": [{
+                        "Actions": [
+                            {
                                 "Name": "create-changeset",
-                                "InputArtifacts": [{
-                                    "Name": {
-                                        "Fn::Sub": "${AppName}-BuildArtifact"
+                                "InputArtifacts": [
+                                    {
+                                        "Name": {
+                                            "Fn::Sub": "${AppName}-BuildArtifact"
+                                        }
                                     }
-                                }],
+                                ],
                                 "ActionTypeId": {
                                     "Category": "Deploy",
                                     "Owner": "AWS",
@@ -681,54 +716,61 @@
                 "Path": "/cognito/",
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
-                    "Statement": [{
-                        "Effect": "Allow",
-                        "Principal": {
-                            "Service": "lambda.amazonaws.com"
-                        },
-                        "Action": "sts:AssumeRole"
-                    }]
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
                 },
-                "Policies": [{
-                    "PolicyName": "CognitoConfig",
-                    "PolicyDocument": {
-                        "Version": "2012-10-17",
-                        "Statement": [{
-                                "Sid": "Logging",
-                                "Effect": "Allow",
-                                "Action": [
-                                    "logs:CreateLogGroup",
-                                    "logs:CreateLogStream",
-                                    "logs:PutLogEvents"
-                                ],
-                                "Resource": "*"
-                            },
-                            {
-                                "Sid": "Cognito",
-                                "Effect": "Allow",
-                                "Action": [
-                                    "cognito-idp:CreateUserPool",
-                                    "cognito-idp:DeleteUserPool",
-                                    "cognito-idp:CreateUserPoolClient",
-                                    "cognito-idp:DeleteUserPoolClient"
-                                ],
-                                "Resource": "*"
-                            },
-                            {
-                                "Sid": "ConfigBucketWriteAccess",
-                                "Effect": "Allow",
-                                "Action": [
-                                    "s3:PutObject",
-                                    "s3:PutObjectAcl",
-                                    "s3:PutObjectVersionAcl"
-                                ],
-                                "Resource": [{
-                                    "Fn::Sub": "arn:aws:s3:::${BucketName}/*"
-                                }]
-                            }
-                        ]
+                "Policies": [
+                    {
+                        "PolicyName": "CognitoConfig",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Sid": "Logging",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                    ],
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Sid": "Cognito",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "cognito-idp:CreateUserPool",
+                                        "cognito-idp:DeleteUserPool",
+                                        "cognito-idp:CreateUserPoolClient",
+                                        "cognito-idp:DeleteUserPoolClient"
+                                    ],
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Sid": "ConfigBucketWriteAccess",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:PutObjectAcl",
+                                        "s3:PutObjectVersionAcl"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Sub": "arn:aws:s3:::${BucketName}/*"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
                     }
-                }]
+                ]
             }
         }
     },
